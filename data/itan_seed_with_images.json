@@ -13,17 +13,17 @@
     {
       "id": 3,
       "name": "Independence & First Republic",
-      "description": "1960 \u2013 1966"
+      "description": "1960 – 1966"
     },
     {
       "id": 4,
       "name": "Military Rule",
-      "description": "1966 \u2013 1999"
+      "description": "1966 – 1999"
     },
     {
       "id": 5,
       "name": "Democracy",
-      "description": "1999 \u2013 Present"
+      "description": "1999 – Present"
     }
   ],
   "events": [
@@ -34,7 +34,7 @@
       "year": 1914,
       "category_id": 2,
       "location": "Nigeria",
-      "image_url": "https://upload.wikimedia.org/amalgamation.jpg"
+      "image_url": "https://images.pexels.com/photos/346885/pexels-photo-346885.jpeg?auto=compress&cs=tinysrgb&w=800"
     },
     {
       "id": 2,
@@ -43,16 +43,16 @@
       "year": 1960,
       "category_id": 3,
       "location": "Lagos",
-      "image_url": "https://upload.wikimedia.org/independence.jpg"
+      "image_url": "https://images.pexels.com/photos/2035418/pexels-photo-2035418.jpeg?auto=compress&cs=tinysrgb&w=800"
     },
     {
       "id": 3,
       "title": "Nigerian Civil War",
-      "description": "A three-year conflict (1967\u20131970) between the Nigerian government and Biafra, leading to over 1 million deaths.",
+      "description": "A three-year conflict (1967–1970) between the Nigerian government and Biafra, leading to over 1 million deaths.",
       "year": 1967,
       "category_id": 4,
       "location": "Eastern Nigeria",
-      "image_url": "https://upload.wikimedia.org/civil-war.jpg"
+      "image_url": "https://images.pexels.com/photos/460672/pexels-photo-460672.jpeg?auto=compress&cs=tinysrgb&w=800"
     },
     {
       "id": 4,
@@ -61,7 +61,7 @@
       "year": 1999,
       "category_id": 5,
       "location": "Abuja",
-      "image_url": "https://upload.wikimedia.org/democracy.jpg"
+      "image_url": "https://images.pexels.com/photos/4669140/pexels-photo-4669140.jpeg?auto=compress&cs=tinysrgb&w=800"
     }
   ]
 }

@@ -5,7 +5,9 @@ import fs from "fs";
 dotenv.config({ path: ".env.local" });
 
 // Load data.json
-const raw = fs.readFileSync(new URL("../data/itan_seed.json", import.meta.url));
+const raw = fs.readFileSync(
+  new URL("../data/itan_seed_with_images.json", import.meta.url)
+);
 const data = JSON.parse(raw.toString());
 
 // Supabase client

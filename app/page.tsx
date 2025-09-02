@@ -1,78 +1,81 @@
-"use client";
+import Image from "next/image";
+import { supabaseServer } from "@/lib/supabase";
 
-import { useEffect, useState } from "react";
-import { db } from "@/lib/firebase";
-import { collection, getDocs } from "firebase/firestore";
-import Link from "next/link";
-import { motion } from "framer-motion";
+export default async function HomePage() {
+  const supabase = supabaseServer();
 
-type Event = {
-  id: string;
-  title: string;
-  year: number;
-  description: string;
-  imageUrl?: string;
-};
+  const { data: events, error } = await supabase
+    .from("events")
+    .select("id, title, year, description, image_url")
+    .order("id", { ascending: false })
+    .limit(3);
 
-export default function HomePage() {
-  const [events, setEvents] = useState<Event[]>([]);
-
-  useEffect(() => {
-    const fetchEvents = async () => {
-      const querySnapshot = await getDocs(collection(db, "events"));
-      const eventsData = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Event[];
-      // Sort by year ascending
-      setEvents(eventsData.sort((a, b) => a.year - b.year));
-    };
-    fetchEvents();
-  }, []);
+  if (error) {
+    console.error("Failed to fetch events:", error.message);
+  }
 
   return (
-    <main className="bg-gray-50 min-h-screen py-16 px-6">
-      <h1 className="text-center text-5xl font-extrabold text-emerald-700 mb-14">
-        Ìtàn: Nigeria’s History
-      </h1>
+    <main className="min-h-screen flex flex-col">
+      {/* Hero Section */}
+      <section className="flex flex-col items-center justify-center py-20 bg-gradient-to-b from-gray-900 to-black text-white">
+        <h1 className="text-4xl md:text-6xl font-bold">Ìtàn</h1>
+        <p className="mt-4 text-lg text-gray-300">
+          Discover Nigeria’s history through time.
+        </p>
+        <a
+          href="/timeline"
+          className="mt-6 px-6 py-3 bg-emerald-500 rounded-xl font-medium hover:bg-emerald-600 transition"
+        >
+          Explore Timeline
+        </a>
+      </section>
 
-      <div className="relative max-w-4xl mx-auto">
-        {/* Timeline vertical line */}
-        <div className="absolute left-1/2 transform -translate-x-1/2 h-full border-l-4 border-emerald-600"></div>
+      {/* About Section */}
+      <section className="max-w-3xl mx-auto py-16 px-4 text-center">
+        <h2 className="text-2xl font-semibold mb-4">Why Ìtàn?</h2>
+        <p className="text-gray-600">
+          Ìtàn makes Nigerian history interactive and accessible. Browse key
+          events, explore timelines, and share stories that shaped our nation.
+        </p>
+      </section>
 
-        {events.map((event, index) => (
-          <motion.div
-            key={event.id}
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-            className={`mb-16 flex items-center w-full ${
-              index % 2 === 0 ? "justify-start" : "justify-end"
-            }`}
-          >
-            <Link
-              href={`/event/${event.id}`}
-              className="bg-white shadow-xl rounded-2xl p-6 w-[45%] relative hover:shadow-2xl hover:scale-105 transition-transform"
+      {/* Event Preview Section */}
+      <section className="max-w-5xl mx-auto py-16 px-4">
+        <h2 className="text-2xl font-semibold mb-8 text-center">
+          Featured Events
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {events?.map((event) => (
+            <div
+              key={event.id}
+              className="bg-white rounded-2xl shadow p-4 flex flex-col"
             >
-              <span className="absolute top-6 -left-12 w-8 h-8 rounded-full bg-emerald-600 border-4 border-white"></span>
-              <h2 className="text-emerald-700 text-xl font-bold">
-                {event.year}
-              </h2>
-              <h3 className="text-lg font-semibold mt-1">{event.title}</h3>
-              <p className="mt-3 text-gray-600 line-clamp-3">
+              {event.image_url && (
+                <div className="relative h-40 w-full mb-4">
+                  <Image
+                    src={event.image_url}
+                    alt={event.title}
+                    fill
+                    className="rounded-lg object-cover"
+                  />
+                </div>
+              )}
+              <h3 className="font-semibold text-lg">{event.title}</h3>
+              <p className="text-sm text-gray-500">{event.year}</p>
+              <p className="text-gray-700 text-sm mt-2 line-clamp-3">
                 {event.description}
               </p>
-              {event.imageUrl && (
-                <img
-                  src={event.imageUrl}
-                  alt={event.title}
-                  className="mt-4 rounded-lg w-full object-cover max-h-48"
-                />
-              )}
-            </Link>
-          </motion.div>
-        ))}
-      </div>
+              <a
+                href={`/event/${event.id}`}
+                className="mt-auto text-emerald-600 font-medium hover:underline"
+              >
+                Read More →
+              </a>
+            </div>
+          ))}
+        </div>
+      </section>
     </main>
   );
 }
