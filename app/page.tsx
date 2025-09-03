@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { supabaseServer } from "@/lib/supabase";
 
 export default async function HomePage() {
@@ -22,12 +23,12 @@ export default async function HomePage() {
         <p className="mt-4 text-lg text-gray-300">
           Discover Nigeria’s history through time.
         </p>
-        <a
+        <Link
           href="/timeline"
           className="mt-6 px-6 py-3 bg-emerald-500 rounded-xl font-medium hover:bg-emerald-600 transition"
         >
           Explore Timeline
-        </a>
+        </Link>
       </section>
 
       {/* About Section */}
@@ -45,36 +46,42 @@ export default async function HomePage() {
           Featured Events
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {events?.map((event) => (
-            <div
-              key={event.id}
-              className="bg-white rounded-2xl shadow p-4 flex flex-col"
-            >
-              {event.image_url && (
-                <div className="relative h-40 w-full mb-4">
-                  <Image
-                    src={event.image_url}
-                    alt={event.title}
-                    fill
-                    className="rounded-lg object-cover"
-                  />
-                </div>
-              )}
-              <h3 className="font-semibold text-lg">{event.title}</h3>
-              <p className="text-sm text-gray-500">{event.year}</p>
-              <p className="text-gray-700 text-sm mt-2 line-clamp-3">
-                {event.description}
-              </p>
-              <a
-                href={`/event/${event.id}`}
-                className="mt-auto text-emerald-600 font-medium hover:underline"
+        {events?.length ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {events.map((event) => (
+              <div
+                key={event.id}
+                className="bg-white rounded-2xl shadow p-4 flex flex-col"
               >
-                Read More →
-              </a>
-            </div>
-          ))}
-        </div>
+                {event.image_url && (
+                  <div className="relative h-40 w-full mb-4">
+                    <Image
+                      src={event.image_url}
+                      alt={event.title}
+                      fill
+                      className="rounded-lg object-cover"
+                    />
+                  </div>
+                )}
+                <h3 className="font-semibold text-lg">{event.title}</h3>
+                <p className="text-sm text-gray-500">{event.year}</p>
+                <p className="text-gray-700 text-sm mt-2 line-clamp-3">
+                  {event.description}
+                </p>
+                <Link
+                  href={`/event/${event.id}`}
+                  className="mt-auto text-emerald-600 font-medium hover:underline"
+                >
+                  Read More →
+                </Link>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-center text-gray-500">
+            No events available yet. Check back soon!
+          </p>
+        )}
       </section>
     </main>
   );

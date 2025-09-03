@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Itan",
-  description: "Discover Nigeria’s history through time.",
+  title: "Ìtàn — Nigeria’s Interactive History",
+  description: "Discover Nigeria’s history through an interactive timeline",
 };
 
 export default function RootLayout({
