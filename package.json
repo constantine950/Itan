@@ -4,18 +4,19 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "seed": "npx ts-node script/seed.ts",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "seed": "tsc -p tsconfig.scripts.json && node dist/script/seed.js"
   },
   "dependencies": {
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.56.1",
     "dotenv": "^17.2.1",
     "firebase": "^12.2.1",
+    "firebase-admin": "^13.5.0",
     "framer-motion": "^12.23.12",
-    "next": "15.4.6",
+    "next": "^15.5.5",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },
