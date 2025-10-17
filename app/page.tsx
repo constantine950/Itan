@@ -1,44 +1,19 @@
 import Image from "next/image";
 import Link from "next/link";
-import { supabaseServer } from "@/lib/supabase";
+import { getEvents } from "@/lib/dbQueries/db";
+import HeroSection from "./_components/HeroSection";
+import AboutSection from "./_components/AboutSection";
 
 export default async function HomePage() {
-  const supabase = supabaseServer();
-
-  const { data: events, error } = await supabase
-    .from("events")
-    .select("id, title, year, description, image_url")
-    .order("id", { ascending: false })
-    .limit(3);
-
-  if (error) {
-    console.error("Failed to fetch events:", error.message);
-  }
+  const events = await getEvents();
 
   return (
     <main className="min-h-screen flex flex-col">
       {/* Hero Section */}
-      <section className="flex flex-col items-center justify-center py-20 bg-gradient-to-b from-gray-900 to-black text-white">
-        <h1 className="text-4xl md:text-6xl font-bold">Ìtàn</h1>
-        <p className="mt-4 text-lg text-gray-300">
-          Discover Nigeria’s history through time.
-        </p>
-        <Link
-          href="/timeline"
-          className="mt-6 px-6 py-3 bg-emerald-500 rounded-xl font-medium hover:bg-emerald-600 transition"
-        >
-          Explore Timeline
-        </Link>
-      </section>
+      <HeroSection />
 
       {/* About Section */}
-      <section className="max-w-3xl mx-auto py-16 px-4 text-center">
-        <h2 className="text-2xl font-semibold mb-4">Why Ìtàn?</h2>
-        <p className="text-gray-600">
-          Ìtàn makes Nigerian history interactive and accessible. Browse key
-          events, explore timelines, and share stories that shaped our nation.
-        </p>
-      </section>
+      <AboutSection />
 
       {/* Event Preview Section */}
       <section className="max-w-5xl mx-auto py-16 px-4">
