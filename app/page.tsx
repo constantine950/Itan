@@ -9,13 +9,10 @@ export default async function HomePage() {
 
   return (
     <main className="min-h-screen flex flex-col">
-      {/* Hero Section */}
       <HeroSection />
 
-      {/* About Section */}
       <AboutSection />
 
-      {/* Event Preview Section */}
       <section className="max-w-5xl mx-auto py-16 px-4">
         <h2 className="text-2xl font-semibold mb-8 text-center">
           Featured Events

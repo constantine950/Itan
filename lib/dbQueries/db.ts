@@ -33,3 +33,49 @@ export async function getEvents() {
     }
   }
 }
+
+export type Category = {
+  id: string;
+  name: string;
+};
+
+export type Eventt = {
+  id: string;
+  title: string;
+  year: number;
+  description: string;
+  image_url?: string;
+  category_id: string;
+  categoryName?: string;
+};
+
+export async function fetchEvents(): Promise<Eventt[]> {
+  try {
+    // Fetch all categories
+    const categorySnap = await getDocs(collection(db, "categories"));
+    const categories: Record<string, string> = {};
+    categorySnap.forEach((doc) => {
+      const data = doc.data() as Category;
+      categories[doc.id] = data.name;
+    });
+
+    // Fetch all events
+    const eventsQuery = query(collection(db, "events"), orderBy("year", "asc"));
+    const snapshot = await getDocs(eventsQuery);
+
+    // Merge event data with category name
+    const events: Eventt[] = snapshot.docs.map((doc) => {
+      const data = doc.data() as Omit<Eventt, "id">;
+      return {
+        id: doc.id,
+        ...data,
+        categoryName: categories[data.category_id] || "Unknown",
+      };
+    });
+
+    return events;
+  } catch (error) {
+    console.error("Failed to fetch events:", (error as Error).message);
+    return [];
+  }
+}

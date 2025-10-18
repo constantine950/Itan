@@ -1,17 +1,8 @@
-import { supabaseServer } from "@/lib/supabase";
 import TimelineClient from "./timeline-client";
+import { fetchEvents } from "@/lib/dbQueries/db";
 
 export default async function TimelinePage() {
-  const supabase = supabaseServer();
-
-  const { data: events, error } = await supabase
-    .from("events")
-    .select("id, title, year, description, image_url")
-    .order("year", { ascending: true });
-
-  if (error) {
-    console.error("Failed to fetch events:", error.message);
-  }
+  const events = await fetchEvents();
 
   return <TimelineClient events={events || []} />;
 }

@@ -4,88 +4,74 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { Eventt } from "@/lib/dbQueries/db";
 
-type Event = {
-  id: number;
-  title: string;
-  year: number;
-  description: string;
-  image_url?: string;
-  category_id?: number;
-};
-
-const categories: Record<number, string> = {
-  1: "Pre-colonial",
-  2: "Colonial Era",
-  3: "Independence & First Republic",
-  4: "Military Rule",
-  5: "Democracy",
-};
-
-export default function TimelineClient({ events }: { events: Event[] }) {
+export default function TimelineClient({ events }: { events: Eventt[] }) {
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState<number | "all">("all");
+  const [category, setCategory] = useState<string | "all">("all");
 
-  // ✅ Filter events
+  // ✅ Dynamic category list
+  const categoryList = Array.from(
+    new Set(events.map((e) => e.categoryName))
+  ).filter(Boolean);
+
+  // ✅ Filter logic
   const filteredEvents = events.filter((event) => {
     const matchesSearch =
       event.title.toLowerCase().includes(search.toLowerCase()) ||
       event.description.toLowerCase().includes(search.toLowerCase());
 
     const matchesCategory =
-      category === "all" || event.category_id === category;
+      category === "all" || event.categoryName === category;
 
     return matchesSearch && matchesCategory;
   });
 
   // ✅ Group by category
   const groupedEvents = filteredEvents.reduce((acc, event) => {
-    const cat = event.category_id || 0;
+    const cat = event.categoryName || "Unknown";
     if (!acc[cat]) acc[cat] = [];
     acc[cat].push(event);
     return acc;
-  }, {} as Record<number, Event[]>);
+  }, {} as Record<string, Eventt[]>);
 
   return (
-    <main className="min-h-screen py-16 bg-gray-50">
-      <div className="max-w-5xl mx-auto px-4">
+    <main className="min-h-screen py-20 bg-gray-50 text-gray-800">
+      <div className="max-w-6xl mx-auto px-6">
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-12">
-          <h1 className="text-4xl font-bold text-center md:text-left">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-16">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-center md:text-left text-emerald-600">
             Nigeria’s Interactive Timeline
           </h1>
 
-          {/* Back Home button */}
           <Link
             href="/"
-            className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
+            className="px-5 py-2.5 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 transition font-medium"
           >
             ← Back Home
           </Link>
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col md:flex-row gap-4 mb-10">
+        <div className="flex flex-col md:flex-row gap-4 mb-14">
           <input
             type="text"
             placeholder="Search events..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 border rounded-lg px-3 py-2"
+            className="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-emerald-400 focus:outline-none"
           />
 
           <select
             value={category}
             onChange={(e) =>
-              setCategory(
-                e.target.value === "all" ? "all" : Number(e.target.value)
-              )
+              setCategory(e.target.value === "all" ? "all" : e.target.value)
             }
-            className="border rounded-lg px-3 py-2"
+            className="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-emerald-400"
           >
-            <option value="all">All Categories</option>
-            {Object.entries(categories).map(([id, name]) => (
-              <option key={id} value={id}>
+            <option value="all">All Eras</option>
+            {categoryList.map((name) => (
+              <option key={name} value={name}>
                 {name}
               </option>
             ))}
@@ -93,67 +79,56 @@ export default function TimelineClient({ events }: { events: Event[] }) {
         </div>
 
         {/* Timeline */}
-        <div className="relative max-w-3xl mx-auto">
-          {/* Vertical line */}
-          <div className="absolute left-4 md:left-1/2 top-0 bottom-0 border-l-2 border-emerald-500" />
-
-          {Object.entries(groupedEvents).map(([catId, catEvents]) => (
-            <div key={catId} className="mb-16">
-              {/* Era divider */}
-              <h2 className="text-2xl font-bold text-center mb-8 text-emerald-700">
-                {categories[Number(catId)]}
+        <div className="max-w-6xl mx-auto mt-10">
+          {Object.entries(groupedEvents).map(([catName, catEvents]) => (
+            <section key={catName} className="mb-16">
+              {/* Era Title */}
+              <h2 className="text-2xl md:text-3xl font-bold text-emerald-700 mb-8 text-center">
+                {catName}
               </h2>
 
-              <ul className="space-y-12">
-                {catEvents.map((event, index) => (
-                  <motion.li
+              {/* Events in Grid (No Zigzag) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+                {catEvents.map((event) => (
+                  <motion.div
                     key={event.id}
-                    className={`relative flex items-start gap-6 ${
-                      index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
-                    }`}
                     initial={{ opacity: 0, y: 40 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                    viewport={{ once: true, amount: 0.2 }}
+                    transition={{ duration: 0.6 }}
+                    viewport={{ once: true }}
+                    className="bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg transition p-6"
                   >
-                    {/* Dot marker */}
-                    <div className="absolute left-0 md:left-1/2 w-4 h-4 bg-emerald-500 rounded-full -translate-x-1/2 mt-2" />
+                    {event.image_url && (
+                      <div className="relative w-full h-44 mb-4 rounded-xl overflow-hidden">
+                        <Image
+                          src={event.image_url}
+                          alt={event.title}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    )}
 
-                    {/* Card */}
-                    <motion.div
-                      className="bg-white shadow rounded-2xl p-6 w-full md:w-5/12"
-                      initial={{ scale: 0.95 }}
-                      whileInView={{ scale: 1 }}
-                      transition={{ duration: 0.4 }}
+                    <span className="text-sm font-semibold text-emerald-600">
+                      {event.year}
+                    </span>
+                    <h3 className="text-xl font-bold mt-1 text-gray-900">
+                      {event.title}
+                    </h3>
+                    <p className="text-gray-600 mt-2 line-clamp-3">
+                      {event.description}
+                    </p>
+
+                    <Link
+                      href={`/event/${event.id}`}
+                      className="mt-4 inline-block text-emerald-600 font-medium hover:underline"
                     >
-                      {event.image_url && (
-                        <div className="relative w-full h-40 mb-4">
-                          <Image
-                            src={event.image_url}
-                            alt={event.title}
-                            fill
-                            className="object-cover rounded-lg"
-                          />
-                        </div>
-                      )}
-                      <span className="text-sm font-semibold text-emerald-600">
-                        {event.year}
-                      </span>
-                      <h3 className="text-xl font-bold mt-1">{event.title}</h3>
-                      <p className="text-gray-600 mt-2 line-clamp-3">
-                        {event.description}
-                      </p>
-                      <Link
-                        href={`/event/${event.id}`}
-                        className="mt-4 inline-block text-emerald-600 font-medium hover:underline"
-                      >
-                        Read More →
-                      </Link>
-                    </motion.div>
-                  </motion.li>
+                      Read More →
+                    </Link>
+                  </motion.div>
                 ))}
-              </ul>
-            </div>
+              </div>
+            </section>
           ))}
         </div>
       </div>
