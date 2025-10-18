@@ -1,6 +1,6 @@
 import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
 import { db } from "../firebase";
-import { Event } from "../types";
+import { Category, Event, Eventt } from "../types";
 
 export async function getEvents() {
   let events: Event[] = [];
@@ -33,21 +33,6 @@ export async function getEvents() {
     }
   }
 }
-
-export type Category = {
-  id: string;
-  name: string;
-};
-
-export type Eventt = {
-  id: string;
-  title: string;
-  year: number;
-  description: string;
-  image_url?: string;
-  category_id: string;
-  categoryName?: string;
-};
 
 export async function fetchEvents(): Promise<Eventt[]> {
   try {
