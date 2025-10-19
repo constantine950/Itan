@@ -38,3 +38,7 @@ export interface FilterProps {
   setCategory: (value: SetStateAction<string>) => void;
   categoryList: (string | undefined)[];
 }
+
+export interface EventPageProps {
+  params: { id: string };
+}
