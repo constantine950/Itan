@@ -40,5 +40,5 @@ export interface FilterProps {
 }
 
 export interface EventPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }

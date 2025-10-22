@@ -11,9 +11,14 @@ import {
 } from "firebase/firestore";
 import { EventPageProps } from "@/lib/types";
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   try {
-    const docRef = doc(db, "events", params.id);
+    const { id } = await params;
+    const docRef = doc(db, "events", id);
     const docSnap = await getDoc(docRef);
 
     if (!docSnap.exists()) {
@@ -46,7 +51,8 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
 
 export default async function EventPage({ params }: EventPageProps) {
   // ✅ Fetch event document
-  const eventRef = doc(db, "events", params.id);
+  const { id } = await params;
+  const eventRef = doc(db, "events", id);
   const eventSnap = await getDoc(eventRef);
 
   if (!eventSnap.exists()) {
@@ -120,7 +126,7 @@ export default async function EventPage({ params }: EventPageProps) {
           href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
             `${event.title} — via Ìtàn`
           )}&url=${encodeURIComponent(
-            process.env.NEXT_PUBLIC_SITE_URL + "/event/" + params.id
+            process.env.NEXT_PUBLIC_SITE_URL + "/event/" + id
           )}`}
           target="_blank"
           rel="noopener noreferrer"
